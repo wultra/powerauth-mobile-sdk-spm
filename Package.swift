@@ -14,11 +14,11 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "PowerAuth2",
-            url: "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/0.0.2/PowerAuth2-1.6.2.xcframework.zip",
-            checksum: "bed5442992e31036128676bde73a5a75059cdb8287a68bd376ff39598bbb67b4"),
+            url: "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/0.0.3/PowerAuth2-1.6.2.xcframework.zip",
+            checksum: "dbc5b3dded8f5cf5ceacbc7724720b613f6891331a0d13278f867bc2c7ee93ce"),
         .binaryTarget(
             name: "PowerAuthCore",
-            url: "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/0.0.2/PowerAuthCore-1.6.2.xcframework.zip",
-            checksum: "9874dd4c051265fdcbd6d3ddc121703cce9ced72b9b6cf914a00bda8b6edfbad")
+            url: "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/0.0.3/PowerAuthCore-1.6.2.xcframework.zip",
+            checksum: "b59b9374812dde009f51e535a6bb04c482af0539c9d7d6afcae4d68fb123ae3a")
     ]
 )
