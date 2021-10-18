@@ -27,5 +27,7 @@ function CHECK_XCODE_VERSION
     else
         invalid=1
     fi
-    [[ x$invalid == x1 ]] && FAILURE "Invalid Xcode version. Only Xcode 12.2 up to 12.5 are supported."
+    if [ x$invalid == x1 ]; then
+        FAILURE "Invalid Xcode version. Only Xcode 12.2 up to 12.5 are supported."
+    fi
 }
