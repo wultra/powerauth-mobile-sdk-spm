@@ -9,6 +9,8 @@ SDK_REPO="https://github.com/wultra/powerauth-mobile-sdk.git"
 SDK_DIR="${TOP}/sdk-sources"
 BUILD_DIR="${TOP}/frameworks"
 TPM_DIR="${TOP}/tmp"
+ROOT="${TOP}/.."
+PACKAGE_SWIFT="${ROOT}/Package.swift"
 
 # -----------------------------------------------------------------------------
 # CHECK_XCODE_VERSION checks whether xcode installed on the system is right

@@ -42,6 +42,36 @@ function BUILD_LIBS
     "${TOP}/build.sh" $VERSION $OPT_VERBOSE
 }
 
+function INITIALIZE_GITHUB_CLIENT
+{
+    PUSH_DIR "${TOP}"
+    
+    LOAD_API_CREDENTIALS
+    [[ -z "$GITHUB_RELEASE_ACCESS" ]] && FAILURE "Missing \$GITHUB_RELEASE_ACCESS variable in .lime-credentials file."
+    
+    # Split credentials into user & token
+    local ACCESS=(${GITHUB_RELEASE_ACCESS//:/ })
+    local USER=${ACCESS[0]}
+    local TOKEN=${ACCESS[1]}
+    [[ -z "$USER" ]] && FAILURE "Missing user in github access."
+    [[ -z "$TOKEN" ]] && FAILURE "Missing access token in github access."
+    
+    local ORIGIN=`git remote get-url origin`
+    local SITE=`echo $ORIGIN | cut -d'/' -f3`
+    local ORG=`echo $ORIGIN | cut -d'/' -f4`
+    local REPO=`echo $ORIGIN | cut -d'/' -f5 | cut -d'.' -f1`
+    
+    [[ "$SITE" != "github.com" ]] && FAILURE "SPM repository must be cloned from github.com, with using HTTPS protocol."
+    
+    DEBUG_LOG "Going to publish to $ORG/$REPO with $USER identity"
+    
+    GITHUB_INIT $ORG $REPO ${USER} ${TOKEN}
+    
+    # Keep base URL for later
+    DEPLOY_BASE_URL="https://$SITE/$ORG/$REPO"
+    POP_DIR
+}
+
 function PREPARE_PACKAGE
 {
     local VER=$OPT_RELEASE_VERSION
@@ -74,22 +104,26 @@ function PREPARE_PACKAGE
     
     LOG "Creating Package.swift ..."
     
-    local TMP_PKG="${TOP}/Package.swift.tmp"
-    local OUT_PKG="${TOP}/Package.swift"
-    
-    sed -e "s/%VERSION%/$VER/g" "${TOP}/templates/Package.swift" > "${OUT_PKG}"
+    local TMP_PKG="${PACKAGE_SWIFT}.tmp"
+    local OUT_PKG="${PACKAGE_SWIFT}"
+    sed -e "s/%VERSION%/$VER/g" "${TOP}/templates/Package.swift" > "${TMP_PKG}"
+    sed -e "s|%BASE_URL%|$DEPLOY_BASE_URL|g" "${TMP_PKG}" > "${OUT_PKG}"
     sed -e "s/%SDK_ZIP%/$PA_SDK_ZIP/g" "${OUT_PKG}" > "${TMP_PKG}"
     sed -e "s/%SDK_CHECKSUM%/$PA_SDK_HASH/g" "${TMP_PKG}" > "${OUT_PKG}"
     sed -e "s/%CORE_ZIP%/$PA_CORE_ZIP/g" "${OUT_PKG}" > "${TMP_PKG}"
     sed -e "s/%CORE_CHECKSUM%/$PA_CORE_HASH/g" "${TMP_PKG}" > "${OUT_PKG}"
     $RM "${TMP_PKG}"
-    
     POP_DIR
 }
 
 function PUBLISH_RELEASE
 {
     local VER=$OPT_RELEASE_VERSION
+    
+    local GIT_VERBOSE=
+    if [ x$VERBOSE != x2 ]; then
+        GIT_VERBOSE="--quiet"
+    fi
     
     LOG_LINE
     if [ $VER != $VERSION ]; then
@@ -98,42 +132,19 @@ function PUBLISH_RELEASE
         LOG "Publishing PowerAuth mobile SDK $VERSION for SPM..."
     fi
     
-    PUSH_DIR "${TOP}"
-    
-    # --- load credentials ---
-    
-    LOAD_API_CREDENTIALS
-    [[ -z "$GITHUB_RELEASE_ACCESS" ]] && FAILURE "Missing \$GITHUB_RELEASE_ACCESS variable in .lime-credentials file."
-    
-    # Split credentials into user & token
-    local ACCESS=(${GITHUB_RELEASE_ACCESS//:/ })
-    local USER=${ACCESS[0]}
-    local TOKEN=${ACCESS[1]}
-    [[ -z "$USER" ]] && FAILURE "Missing user in github access."
-    [[ -z "$TOKEN" ]] && FAILURE "Missing access token in github access."
-    
-    local ORIGIN=`git remote get-url origin`
-    local SITE=`echo $ORIGIN | cut -d'/' -f3`
-    local DEPLOY_TO_ORG=`echo $ORIGIN | cut -d'/' -f3`
-    local DEPLOY_TO_REPO=`echo $ORIGIN | cut -d'/' -f5 | cut -d'.' -f1`
-    
-    [[ "$SITE" != "github.com" ]] && FAILURE "SPM repository must be cloned from github.com, with using HTTPS protocol."
-    
-    DEBUG_LOG "Going to publish to $DEPLOY_TO_ORG/$DEPLOY_TO_REPO with $USER identity"
-    
-    GITHUB_INIT $DEPLOY_TO_ORG $DEPLOY_TO_REPO ${USER} ${TOKEN}
+    PUSH_DIR "${ROOT}"
     
     # --- commit & push changes ---
     
     LOG "Commiting all chages..."
-    git add "Package.swift"
-    git commit -m "Deployment: Update release files to ${VER}"
+    git add "Package.swift" $GIT_VERBOSE
+    git commit -m "Deployment: Update release files to ${VER}" $GIT_VERBOSE
     
     LOG "Creating tag for version..."
-    git tag -a ${VER} -m "Version ${VER}"
+    git tag -a ${VER} -m "Version ${VER}" $GIT_VERBOSE
     
     LOG "Pushing all changes..."
-    git push --follow-tag
+    git push --follow-tag $GIT_VERBOSE
     
     # --- upload to github ---
     
@@ -156,7 +167,7 @@ function PUBLISH_RELEASE
     POP_DIR
     
     LOG_LINE
-    LOG "Now you can edit release notes at  : https://$SITE/$DEPLOY_TO_ORG/$DEPLOY_TO_REPO/releases/$VER"
+    LOG "Now you can edit release notes at  : $DEPLOY_BASE_URL/releases/$VER"
     LOG_LINE
 }
 
@@ -196,7 +207,8 @@ REQUIRE_COMMAND git
 REQUIRE_COMMAND jq
 REQUIRE_COMMAND curl
 
-#BUILD_LIBS
+BUILD_LIBS
+INITIALIZE_GITHUB_CLIENT
 PREPARE_PACKAGE
 PUBLISH_RELEASE
 
