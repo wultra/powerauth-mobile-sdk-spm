@@ -140,11 +140,11 @@ function PUBLISH_RELEASE
     # --- commit & push changes ---
     
     LOG "Commiting all chages..."
-    git add "Package.swift" $GIT_VERBOSE
+    git add "Package.swift"
     git commit -m "Deployment: Update release files to ${VER}" $GIT_VERBOSE
     
     LOG "Creating tag for version..."
-    git tag -a ${VER} -m "Version ${VER}" $GIT_VERBOSE
+    git tag -a ${VER} -m "Version ${VER}"
     
     LOG "Pushing all changes..."
     git push --follow-tag $GIT_VERBOSE
