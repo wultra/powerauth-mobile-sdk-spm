@@ -1,3 +1,5 @@
 frameworks/
 tmp/
 sdk-sources/
+*.tmp
+.swiftpm

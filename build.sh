@@ -38,11 +38,11 @@ function CLONE_SOURCES
 {
     "${TOP}/clone.sh" $VERSION $OPT_VERBOSE
     if [ ! -f "$SDK_DIR/scripts/ios-build-sdk.sh" ]; then
-        FAILURE "Incompatible version of PowerAuth mobile SDK."
+        FAILURE "Unsupported version of PowerAuth mobile SDK. First supported version is 1.6.2"
     fi
     local SUPPORTS_SDK=`$SDK_DIR/scripts/ios-build-sdk.sh -h | grep buildSdk`
     if [ -z "$SUPPORTS_SDK" ]; then
-        FAILURE "Incompatible version of PowerAuth mobile SDK."
+        FAILURE "Incompatible version of PowerAuth mobile SDK. First supported version is 1.6.2"
     fi
 }
 
