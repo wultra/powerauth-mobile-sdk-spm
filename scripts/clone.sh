@@ -19,7 +19,7 @@ function USAGE
     echo "  Script prepare git repository with PowerAuth mobile SDK source"
     echo "  codes with a specific version at the predefined local path."
     echo ""
-    echo "version            Existing PowerAuth mobile SDK version to prepare"
+    echo "    version        Existing PowerAuth mobile SDK version to prepare"
     echo "                   for Swift Package Manager inregration. Only X.Y.Z"
     echo "                   format is accepted"
     echo ""

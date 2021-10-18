@@ -19,7 +19,7 @@ function USAGE
     echo "  Script build PowerAuth2.xcframework and PowerAuthCore.xcframework"
     echo "  with a specific version at the predefined local path."
     echo ""
-    echo "version            Existing PowerAuth mobile SDK version to prepare"
+    echo "    version        Existing PowerAuth mobile SDK version to prepare"
     echo "                   for Swift Package Manager inregration. Only X.Y.Z"
     echo "                   format is accepted"
     echo ""
@@ -73,6 +73,7 @@ done
 [[ -z "$VERSION" ]] && FAILURE "You must specify version to build."
 
 CLONE_SOURCES
+CHECK_XCODE_VERSION
 BUILD_FRAMEWORKS
 
 EXIT_SUCCESS

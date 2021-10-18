@@ -1,15 +1,11 @@
 # -----------------------------------------------------------------------------
 # Common configuration for all scripts
-#
-# SDK_REPO    - URL of PowerAuth mobile SDK
-# SDK_DIR     - local directory where PowerAuth mobile SDK is cloned
-# BUILD_DIR   - Build directory, where final XCFrameworks are prepared
 # -----------------------------------------------------------------------------
-SDK_REPO="https://github.com/wultra/powerauth-mobile-sdk.git"
-SDK_DIR="${TOP}/sdk-sources"
-BUILD_DIR="${TOP}/frameworks"
-TPM_DIR="${TOP}/tmp"
 ROOT="${TOP}/.."
+SDK_REPO="https://github.com/wultra/powerauth-mobile-sdk.git"
+SDK_DIR="${ROOT}/sdk-sources"
+BUILD_DIR="${ROOT}/frameworks"
+TPM_DIR="${ROOT}/tmp"
 PACKAGE_SWIFT="${ROOT}/Package.swift"
 
 # -----------------------------------------------------------------------------

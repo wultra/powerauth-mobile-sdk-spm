@@ -132,6 +132,9 @@ function PUBLISH_RELEASE
         LOG "Publishing PowerAuth mobile SDK $VERSION for SPM..."
     fi
     
+    local XCODE_VER=$(GET_XCODE_VERSION --full)
+    local RELEASE_NOTES="- PowerAuth mobile SDK $VERSION, compiled with Xcode $XCODE_VER"
+    
     PUSH_DIR "${ROOT}"
     
     # --- commit & push changes ---
@@ -153,7 +156,7 @@ function PUBLISH_RELEASE
     
     local rel_json="$GHC_TMP/rel.json"
     
-    GITHUB_CREATE_RELEASE "${VER}" "${VER}" "- PowerAuth mobile SDK $VERSION" false false "$rel_json"
+    GITHUB_CREATE_RELEASE "${VER}" "${VER}" "$RELEASE_NOTES" false false "$rel_json"
         
     LOG "Uploading $PA_CORE_ZIP ..."
     GITHUB_UPLOAD_RELEASE_ASSET "$rel_json" "$PA_CORE_ZIP" "$PA_CORE_ZIP" 'application/zip'
