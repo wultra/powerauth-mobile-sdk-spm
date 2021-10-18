@@ -1,6 +1,6 @@
 # PowerAuth mobile SDK for Swift PM
 
-This repository contains build scripts that helps prepare [PowerAuth mobile SDK](https://github.com/wultra/powerauth-mobile-sdk) for integration with [Swift Package Manager](https://swift.org/package-manager). The repository also contains a swift package file mapping supported PowerAuth mobile SDK releases.
+This repository contains build scripts that helps prepare [PowerAuth mobile SDK](https://github.com/wultra/powerauth-mobile-sdk) for integration with [Swift Package Manager](https://swift.org/package-manager). The repository also contains `Package.swift` file describing an actual PowerAuth mobile SDK releases for SPM.
 
 ## Usage
 
@@ -34,7 +34,6 @@ let package = Package(
     ]
 )
 ```
-
 
 ## Prepare new release
 
