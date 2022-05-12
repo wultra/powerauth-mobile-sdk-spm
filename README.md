@@ -24,8 +24,8 @@ let package = Package(
             targets: ["YourLibrary"]),
     ],
     dependencies: [
-        .package(name: "PowerAuth2", url: "https://github.com/wultra/powerauth-mobile-sdk-spm.git", .from("1.6.2")),
-        .package(name: "PowerAuthCore", url: "https://github.com/wultra/powerauth-mobile-sdk-spm.git", .from("1.6.2")),
+        .package(name: "PowerAuth2", url: "https://github.com/wultra/powerauth-mobile-sdk-spm.git", .upToNextMinor(from: "1.6.2")),
+        .package(name: "PowerAuthCore", url: "https://github.com/wultra/powerauth-mobile-sdk-spm.git", .upToNextMinor(from: "1.6.2")),
     ],
     targets: [
         .target(

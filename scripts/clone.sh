@@ -21,7 +21,8 @@ function USAGE
     echo ""
     echo "    version        Existing PowerAuth mobile SDK version to prepare"
     echo "                   for Swift Package Manager inregration. Only X.Y.Z"
-    echo "                   format is accepted"
+    echo "                   format is accepted or use 'develop' if develop"
+    echo "                   build is going to prepare."
     echo ""
     echo "options are:"
     echo "    -v0            turn off all prints to stdout"
@@ -35,6 +36,8 @@ function USAGE
 # -----------------------------------------------------------------------------
 # Main script starts here
 
+OPT_BRANCH=
+
 while [[ $# -gt 0 ]]
 do
     opt="$1"
@@ -43,8 +46,12 @@ do
             SET_VERBOSE_LEVEL_FROM_SWITCH $opt ;;
         -h | --help)
             USAGE 0 ;;
+        develop)
+            VERSION='develop' 
+            OPT_BRANCH='develop' ;;
         *)
-            VALIDATE_AND_SET_VERSION_STRING $opt ;;
+            VALIDATE_AND_SET_VERSION_STRING $opt 
+            OPT_BRANCH= ;;
     esac
     shift
 done
@@ -54,7 +61,11 @@ done
 REQUIRE_COMMAND git
 
 SDK_DIR_NAME=$(basename "$SDK_DIR")
-SDK_BRANCH_NAME=spm/$VERSION
+if [ -z "$OPT_BRANCH" ]; then
+    SDK_BRANCH_NAME=spm/$VERSION
+else
+    SDK_BRANCH_NAME=$OPT_BRANCH
+fi
 
 # Validate cloned repository with SDK sources
 DO_CLONE=0
@@ -79,18 +90,31 @@ fi
 if [ x$DO_CLONE == x1 ]; then
     LOG "Cloning SDK repository..."
     git clone --recurse-submodules $GIT_VERBOSE $SDK_REPO "$SDK_DIR"
-    LOG "Switching to version $VERSION..."
-    git -C "$SDK_DIR" checkout $GIT_VERBOSE tags/$VERSION -b $SDK_BRANCH_NAME
+    if [ -z "$OPT_BRANCH" ]; then
+        LOG "Switching to version $VERSION..."
+        git -C "$SDK_DIR" checkout $GIT_VERBOSE tags/$VERSION -b $SDK_BRANCH_NAME
+    else
+        LOG "Switching to branch $SDK_BRANCH_NAME..."
+        git -C "$SDK_DIR" checkout $GIT_VERBOSE $SDK_BRANCH_NAME
+    fi
 else
     LOG "Updating SDK repository..."
     git -C "$SDK_DIR" fetch --all --tags $GIT_VERBOSE
-    LOG "Switching to version $VERSION..."
-    if git -C "$SDK_DIR" rev-parse --quiet --verify $SDK_BRANCH_NAME 2>&1 1>/dev/null; then
+    if [ -z "$OPT_BRANCH" ]; then
+        LOG "Switching to version $VERSION..."
+        if git -C "$SDK_DIR" rev-parse --quiet --verify $SDK_BRANCH_NAME 2>&1 1>/dev/null; then
+            # Local branch for tag exists
+            git -C "$SDK_DIR" checkout $GIT_VERBOSE $SDK_BRANCH_NAME
+        else
+            # Local branch for tag doesn't exist
+            git -C "$SDK_DIR" checkout $GIT_VERBOSE tags/$VERSION -b $SDK_BRANCH_NAME
+        fi
+    else
+        LOG "Switching to branch $SDK_BRANCH_NAME..."
         # Local branch for tag exists
         git -C "$SDK_DIR" checkout $GIT_VERBOSE $SDK_BRANCH_NAME
-    else
-        # Local branch for tag doesn't exist
-        git -C "$SDK_DIR" checkout $GIT_VERBOSE tags/$VERSION -b $SDK_BRANCH_NAME
+        LOG "Pulling changes for branch $SDK_BRANCH_NAME..."
+        git -C "$SDK_DIR" pull $GIT_VERBOSE
     fi
 fi
 LOG "Updating submodules..."

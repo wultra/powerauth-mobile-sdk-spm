@@ -22,13 +22,15 @@ function USAGE
     echo ""
     echo "    version        Existing PowerAuth mobile SDK version to prepare"
     echo "                   for Swift Package Manager inregration. Only X.Y.Z"
-    echo "                   format is accepted"
+    echo "                   format is accepted or use 'develop' if develop"
+    echo "                   build has to be prepared."
     echo ""
     echo "options are:"
     echo ""
     echo "    -r version | --release-version version"
     echo "                   set custom release version if it's different"
     echo "                   than PowerAuth mobile SDK version"
+    echo ""
     echo "    -v0            turn off all prints to stdout"
     echo "    -v1            print only basic log about build progress"
     echo "    -v2            print full build log with rich debug info"
@@ -40,6 +42,13 @@ function USAGE
 function BUILD_LIBS
 {
     "${TOP}/build.sh" $VERSION $OPT_VERBOSE
+    
+    if [ ! -z "$OPT_BRANCH" ]; then
+        PUSH_DIR "$SDK_DIR"
+        VERSION=`git rev-parse --short HEAD`
+        OPT_RELEASE_VERSION=$DEV_RELEASE
+        POP_DIR
+    fi
 }
 
 function INITIALIZE_GITHUB_CLIENT
@@ -83,7 +92,11 @@ function PREPARE_PACKAGE
     
     LOG_LINE
     if [ $VER != $VERSION ]; then
-        LOG "Preparing SPM release $VER based on PowerAuth SDK $VERSION ..."
+        if [ ! -z "$OPT_BRANCH" ]; then
+            LOG "Preparing SPM release based on PowerAuth SDK from '$OPT_BRANCH' branch ..."
+        else
+            LOG "Preparing SPM release $VER based on PowerAuth SDK $VERSION ..."
+        fi
     else
         LOG "Preparing SPM release $VER ..."
     fi
@@ -127,7 +140,11 @@ function PUBLISH_RELEASE
     
     LOG_LINE
     if [ $VER != $VERSION ]; then
-        LOG "Publishing PowerAuth mobile SDK $VERSION for SPM release $VER..."
+        if [ ! -z "$OPT_BRANCH" ]; then
+            LOG "Publishing PowerAuth mobile SDK from '$OPT_BRANCH' branch ..."
+        else
+            LOG "Publishing PowerAuth mobile SDK $VERSION for SPM release $VER..."
+        fi 
     else
         LOG "Publishing PowerAuth mobile SDK $VERSION for SPM..."
     fi
@@ -143,8 +160,10 @@ function PUBLISH_RELEASE
     git add "Package.swift"
     git commit -m "Deployment: Update release files to ${VER}" $GIT_VERBOSE
     
-    LOG "Creating tag for version..."
-    git tag -a ${VER} -m "Version ${VER}"
+    if [ -z "$OPT_BRANCH" ]; then
+        LOG "Creating tag for version..."
+        git tag -a ${VER} -m "Version ${VER}"
+    fi
     
     LOG "Pushing all changes..."
     git push --follow-tag $GIT_VERBOSE
@@ -176,6 +195,7 @@ function PUBLISH_RELEASE
 
 OPT_VERBOSE=
 OPT_RELEASE_VERSION=
+OPT_BRANCH=
 
 # -----------------------------------------------------------------------------
 # Main script starts here
@@ -194,6 +214,11 @@ do
         -r | --release-version)
             OPT_RELEASE_VERSION=$2
             shift
+            ;;
+        develop)
+            VERSION='develop'
+            OPT_RELEASE_VERSION='develop'
+            OPT_BRANCH='develop'
             ;;
         *)
             VALIDATE_AND_SET_VERSION_STRING $opt 

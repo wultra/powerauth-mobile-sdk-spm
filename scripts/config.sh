@@ -7,6 +7,7 @@ SDK_DIR="${ROOT}/sdk-sources"
 BUILD_DIR="${ROOT}/frameworks"
 TPM_DIR="${ROOT}/tmp"
 PACKAGE_SWIFT="${ROOT}/Package.swift"
+DEV_RELEASE='0.0.10'
 
 # -----------------------------------------------------------------------------
 # CHECK_XCODE_VERSION checks whether xcode installed on the system is right

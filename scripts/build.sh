@@ -14,14 +14,15 @@ source "${TOP}/config.sh"
 function USAGE
 {
     echo ""
-    echo "Usage:  $CMD  version  [options]"
+    echo "Usage:  $CMD  [options] version"
     echo ""
     echo "  Script build PowerAuth2.xcframework and PowerAuthCore.xcframework"
     echo "  with a specific version at the predefined local path."
     echo ""
     echo "    version        Existing PowerAuth mobile SDK version to prepare"
     echo "                   for Swift Package Manager inregration. Only X.Y.Z"
-    echo "                   format is accepted"
+    echo "                   format is accepted use 'develop' if develop"
+    echo "                   build is going to prepare."
     echo ""
     echo "options are:"
     echo "    -v0            turn off all prints to stdout"
@@ -64,6 +65,8 @@ do
             OPT_VERBOSE=$opt;;
         -h | --help)
             USAGE 0 ;;
+        develop)
+            VERSION='develop' ;;
         *)
             VALIDATE_AND_SET_VERSION_STRING $opt ;;
     esac
