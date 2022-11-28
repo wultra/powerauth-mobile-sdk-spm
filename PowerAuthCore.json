@@ -1,1 +1,8 @@
-{ "1.7.6": "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.7.6/PowerAuthCore-1.7.6.xcframework.zip" }
+{
+    "1.6.5": "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.6.5/PowerAuthCore-1.6.5.xcframework.zip",
+    "1.6.6": "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.6.6/PowerAuthCore-1.6.6.xcframework.zip",
+    "1.7.1": "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.7.1/PowerAuthCore-1.7.1.xcframework.zip",
+    "1.7.2": "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.7.2/PowerAuthCore-1.7.2.xcframework.zip",
+    "1.7.3": "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.7.3/PowerAuthCore-1.7.3.xcframework.zip",
+    "1.7.6": "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.7.6/PowerAuthCore-1.7.6.xcframework.zip"
+}
