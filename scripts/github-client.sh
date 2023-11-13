@@ -107,7 +107,7 @@ function GITHUB_GET_ERROR
 {
     local jsonf=${2:-${GHC_COUT}}
     local message=`jq .message "$jsonf"`
-    if [ $message == 'null' ]; then
+    if [ "$message" == 'null' ]; then
         message='Unexpected JSON response'
     fi
     echo $message
