@@ -24,11 +24,11 @@ function CHECK_XCODE_VERSION
         if (( ${xcodever[1]} < 2)); then
             # Xcode 12.0 or 12.1
             invalid=1
-        fi    
-    else
+        fi
+    elif (( ${xcodever[0]} < 12)); then
         invalid=1
     fi
     if [ x$invalid == x1 ]; then
-        FAILURE "Invalid Xcode version. Only Xcode 12.2 up to 12.5 are supported."
+        FAILURE "Invalid Xcode version. Only Xcode 12.2 and newer are supported."
     fi
 }

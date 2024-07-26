@@ -4,8 +4,8 @@ import PackageDescription
 let package = Package(
     name: "PowerAuth2",
     platforms: [
-        .iOS(.v9),
-        .tvOS(.v9)
+        .iOS(.v11),
+        .tvOS(.v11)
     ],
     products: [
         .library(name: "PowerAuth2", targets: ["PowerAuth2"]),
@@ -14,11 +14,11 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "PowerAuth2",
-            url: "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/0.0.10/PowerAuth2-bf20ad9.xcframework.zip",
-            checksum: "5da4ee492537e0b619f26e5012b423f82f3bb69754f4f1c4b8424a7a677174c1"),
+            url: "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.8.2/PowerAuth2-1.8.2.xcframework.zip",
+            checksum: "fec8648d6b29d604f781eedd7098658679a4f8e39bd56056eab480e6bbfe6cd6"),
         .binaryTarget(
             name: "PowerAuthCore",
-            url: "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/0.0.10/PowerAuthCore-bf20ad9.xcframework.zip",
-            checksum: "f1c04f5a120763aea8f59e24ee7ecea68011ac66321efb2948166dce998a625c")
+            url: "https://github.com/wultra/powerauth-mobile-sdk-spm/releases/download/1.8.2/PowerAuthCore-1.8.2.xcframework.zip",
+            checksum: "4bd57f64004d2f3579eb17bf83f6f540ca3484ffc2300ed387691a6a1a1f071a")
     ]
 )

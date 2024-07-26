@@ -20,21 +20,24 @@ function USAGE
     echo "  Script deploys PowerAuth2.xcframework and PowerAuthCore.xcframework"
     echo "  with a specific version into the github release."
     echo ""
-    echo "    version        Existing PowerAuth mobile SDK version to prepare"
-    echo "                   for Swift Package Manager inregration. Only X.Y.Z"
-    echo "                   format is accepted or use 'develop' if develop"
-    echo "                   build has to be prepared."
+    echo "    version         Existing PowerAuth mobile SDK version to prepare"
+    echo "                    for Swift Package Manager inregration. Only X.Y.Z"
+    echo "                    format is accepted or use 'develop' if develop"
+    echo "                    build has to be prepared."
     echo ""
     echo "options are:"
     echo ""
     echo "    -r version | --release-version version"
-    echo "                   set custom release version if it's different"
-    echo "                   than PowerAuth mobile SDK version"
+    echo "                    set custom release version if it's different"
+    echo "                    than PowerAuth mobile SDK version"
     echo ""
-    echo "    -v0            turn off all prints to stdout"
-    echo "    -v1            print only basic log about build progress"
-    echo "    -v2            print full build log with rich debug info"
-    echo "    -h | --help    print this help information"
+    echo "    -d | --dry-run  prepare library artefacts only, without"
+    echo "                    publishing to the github"
+    echo ""
+    echo "    -v0             turn off all prints to stdout"
+    echo "    -v1             print only basic log about build progress"
+    echo "    -v2             print full build log with rich debug info"
+    echo "    -h | --help     print this help information"
     echo ""
     exit $1
 }
@@ -127,6 +130,15 @@ function PREPARE_PACKAGE
     sed -e "s/%CORE_CHECKSUM%/$PA_CORE_HASH/g" "${TMP_PKG}" > "${OUT_PKG}"
     $RM "${TMP_PKG}"
     POP_DIR
+    
+    PUSH_DIR "$ROOT"
+    
+    LOG "Creating artifacts for Carthage ..."
+    
+    echo "{ \"$VER\": \"${DEPLOY_BASE_URL}/releases/download/${VER}/${PA_SDK_ZIP}\" }" > "PowerAuth2.json"
+    echo "{ \"$VER\": \"${DEPLOY_BASE_URL}/releases/download/${VER}/${PA_CORE_ZIP}\" }" > "PowerAuthCore.json"
+    
+    POP_DIR
 }
 
 function PUBLISH_RELEASE
@@ -139,6 +151,10 @@ function PUBLISH_RELEASE
     fi
     
     LOG_LINE
+    if [ x$OPT_DRY_RUN == x1 ]; then
+        LOG "Skipping library publishing as requested."
+        return
+    fi
     if [ $VER != $VERSION ]; then
         if [ ! -z "$OPT_BRANCH" ]; then
             LOG "Publishing PowerAuth mobile SDK from '$OPT_BRANCH' branch ..."
@@ -158,6 +174,8 @@ function PUBLISH_RELEASE
     
     LOG "Commiting all chages..."
     git add "Package.swift"
+    git add "PowerAuth2.json"
+    git add "PowerAuthCore.json"
     git commit -m "Deployment: Update release files to ${VER}" $GIT_VERBOSE
     
     if [ -z "$OPT_BRANCH" ]; then
@@ -193,6 +211,7 @@ function PUBLISH_RELEASE
     LOG_LINE
 }
 
+OPT_DRY_RUN=0
 OPT_VERBOSE=
 OPT_RELEASE_VERSION=
 OPT_BRANCH=
@@ -214,6 +233,9 @@ do
         -r | --release-version)
             OPT_RELEASE_VERSION=$2
             shift
+            ;;
+        -d | --dry-run)
+            OPT_DRY_RUN=1
             ;;
         develop)
             VERSION='develop'
