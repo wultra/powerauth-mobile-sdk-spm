@@ -50,7 +50,7 @@ function CLONE_SOURCES
 function BUILD_FRAMEWORKS
 {
     LOG "Building PowerAuthCore.xcframework..."
-    "$SDK_DIR/scripts/ios-build-sdk.sh" buildCore buildSdk --out-dir "$BUILD_DIR" --tmp-dir "$TMP_DIR" $OPT_VERBOSE
+    "$SDK_DIR/scripts/ios-build-sdk.sh" buildCore buildSdk --include-dsyms --out-dir "$BUILD_DIR" --tmp-dir "$TMP_DIR" $OPT_VERBOSE
 }
 
 # -----------------------------------------------------------------------------
